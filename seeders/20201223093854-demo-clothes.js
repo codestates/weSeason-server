@@ -95,7 +95,7 @@ module.exports = {
       createdAt: new Date(),
       updatedAt: new Date()
     }, {
-      cloth: '청재켓',
+      cloth: '청자켓',
       createdAt: new Date(),
       updatedAt: new Date()
     }, {
@@ -192,6 +192,10 @@ module.exports = {
       updatedAt: new Date()
     }, {
       cloth: '발열내의',
+      createdAt: new Date(),
+      updatedAt: new Date()
+    }, {
+      cloth: '가디건',
       createdAt: new Date(),
       updatedAt: new Date()
     }])

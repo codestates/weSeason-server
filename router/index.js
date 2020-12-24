@@ -1,12 +1,12 @@
-// const express = require('express');
-// const router = express.Router();
-// const usersController = require('../controller/users/index')
+const express = require('express');
+const router = express.Router();
+const usersController = require('../controller/users/index')
 // const authController = require('../controller/auth/index')
 // const clothesController = require('../controller/clothes/index')
 // const weatherController = require('../controller/weather/index')
 
-// router.get('/users', usersController);
-// router.post('/users', usersController);
+router.get('/users/:email', usersController.get);
+router.post('/users', usersController.post);
 // router.patch('/users', usersController);
 // router.delete('/users', usersController);
 
@@ -16,3 +16,5 @@
 // router.get('/clothes', clothesController);
 
 // router.get('/weather', weatherController);
+
+module.exports = router;
