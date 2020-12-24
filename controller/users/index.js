@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 
 module.exports = {
   updateUser: async (req, res) => {
-      //여기 문제가 있다. 받는 정보가 더 필요하다. 패스워드가 같은 회원이 있다면.
+    //여기 문제가 있다. 받는 정보가 더 필요하다. 패스워드가 같은 회원이 있다면.
     const userInfo = await users.findOne({
       where: {password: req.body.passwordCheck} //api 북과 다른 부분
     });
@@ -12,8 +12,6 @@ module.exports = {
       res.status(422).json({
         message: 'Invalid Password'
       });
-
-      done();
     }
 
     const newPassword = req.body.password;
@@ -25,8 +23,6 @@ module.exports = {
       res.status(406).json({
         message: 'Nothing Changed'
       });
-
-      done();
     }
 
     //둘 다 없을 때
@@ -34,8 +30,6 @@ module.exports = {
       res.status(400).json({
         message: 'Bad Request'
       });
-
-      done();
     }
 
     //닉네임만 있을 때
@@ -47,8 +41,6 @@ module.exports = {
       res.status(200).json({
         message: 'OK'
       });
-
-      done();
     }
 
     //비밀번호만 있을 떄
@@ -60,8 +52,6 @@ module.exports = {
       res.status(200).json({
         message: 'OK'
       });
-
-      done();
     }
 
     //둘 다 있을 때
@@ -74,8 +64,6 @@ module.exports = {
       res.status(200).json({
         message: 'OK'
       });
-
-      done();
     }
   },
 
@@ -84,8 +72,6 @@ module.exports = {
       res.status(401).json({
         message: 'Get Out Of Here'
       });
-
-      done();
     }
 
     const userInfo = await users.findOne({
@@ -96,8 +82,6 @@ module.exports = {
       res.status(401).json({
         message: 'Get Out Of Here'
       });
-    
-      done();
     }
 
     await userInfo.destroy();
@@ -105,11 +89,9 @@ module.exports = {
     res.status(200).json({
         message: 'OK'
     });
-  
-    done();
   },
   
-    infoUser: async (req, res) => {
+  infoUser: async (req, res) => {
     const userInfo = await users.findOne({
       where : {
         email: req.params.email
@@ -118,12 +100,14 @@ module.exports = {
         exclude: ['password']
       }
     });
+
     if (!userInfo) {
-      return res.status(401).send('Unauthorized')
+      return res.status(401).send('Unauthorized');
     }
     else {
-      res.status(200).send({"message": "ok", "data": { userInfo }})
+      res.status(200).send({"message": "ok", "data": { userInfo }});
     }
+
     // const authorization = req.headers['authorization']
 
     // if (!authorization) {
@@ -154,8 +138,9 @@ module.exports = {
     //   })
     // }
   },
+
   createUser: async (req, res) => {
-    const { name, nickname, email, password} = req.body;
+    const { name, nickname, email, password } = req.body;
 
     users.findOrCreate ({
       where: {
@@ -169,10 +154,10 @@ module.exports = {
     })
     .then(async ([user, created]) => {
       if (!created) {
-        return res.status(409).send('conflict')
+        return res.status(409).send('conflict');
       }
       const data = await user.get({ plain: true });
-      res.status(200).json(data)
-    })  
+      res.status(200).json(data);
+    });
   }
 }
