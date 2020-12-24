@@ -1,16 +1,19 @@
 const express = require('express')
-const app = express()
+const cors = require("cors");
 const fs = require("fs");
 const https = require('https')
 const privateKey = fs.readFileSync('./key.pem', "utf8");
 const certificate = fs.readFileSync('./cert.pem', "utf8");
 const credentials = { key: privateKey, cert: certificate };
-// const routerIdx = require('./router/index');
+const routerIdx = require('./router/index');
 
+const app = express()
+
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-// app.use('/', routerIdx);
+app.use('/', routerIdx);
 
 app.get('/', (req, res) => {
   res.send('Hello World!')
