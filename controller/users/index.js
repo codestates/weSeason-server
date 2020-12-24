@@ -1,4 +1,5 @@
 const { users } = require('../../models/index');
+const jwt = require('jsonwebtoken');
 
 module.exports = {
   updateUser: async (req, res) => {
@@ -106,5 +107,72 @@ module.exports = {
     });
   
     done();
+  },
+  
+    infoUser: async (req, res) => {
+    const userInfo = await users.findOne({
+      where : {
+        email: req.params.email
+      },
+      attributes: {
+        exclude: ['password']
+      }
+    });
+    if (!userInfo) {
+      return res.status(401).send('Unauthorized')
+    }
+    else {
+      res.status(200).send({"message": "ok", "data": { userInfo }})
+    }
+    // const authorization = req.headers['authorization']
+
+    // if (!authorization) {
+    //   return res.status(401).send('Unauthorized')
+    // }
+    // else {
+    //   const token = authorization.split(' ')[1];
+    //   jwt.verify(token, process.env.ACCESS_SECRET, async (err, data) => {
+    //     if (err) {
+    //       return res.status(401).send('Unauthorized')
+    //     }
+    //     else {
+    //       const userInfo = await users.findOne({
+    //         where : {
+    //           email: data.email
+    //         },
+    //         attributes: {
+    //           exclude: ['password']
+    //         }
+    //       });
+    //       if (!userInfo) {
+    //         return res.status(401).send('Unauthorized')
+    //       }
+    //       else {
+    //         res.status(200).send({"message": "ok", "data": { userInfo }})
+    //       }
+    //     }
+    //   })
+    // }
+  },
+  createUser: async (req, res) => {
+    const { name, nickname, email, password} = req.body;
+
+    users.findOrCreate ({
+      where: {
+        email: email
+      }, 
+      defaults: {
+        name: name,
+        nickname: nickname,
+        password: password
+      }
+    })
+    .then(async ([user, created]) => {
+      if (!created) {
+        return res.status(409).send('conflict')
+      }
+      const data = await user.get({ plain: true });
+      res.status(200).json(data)
+    })  
   }
 }
