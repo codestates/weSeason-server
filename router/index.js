@@ -5,7 +5,7 @@ const authController = require('../controller/auth/index')
 const clothesController = require('../controller/clothes/index')
 // const weatherController = require('../controller/weather/index')
 
-router.get('/users/:email', usersController.infoUser);
+router.get('/users', usersController.infoUser);
 router.post('/users', usersController.createUser);
 router.patch('/users', usersController.updateUser);
 router.delete('/users', usersController.deleteUser);
