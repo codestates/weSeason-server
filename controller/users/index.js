@@ -92,51 +92,35 @@ module.exports = {
   },
   
   infoUser: async (req, res) => {
-    const userInfo = await users.findOne({
-      where : {
-        email: req.params.email
-      },
-      attributes: {
-        exclude: ['password']
-      }
-    });
+    const authorization = req.headers['authorization']
 
-    if (!userInfo) {
-      return res.status(401).send('Unauthorized');
+    if (!authorization) {
+      return res.status(401).send('Unauthorized')
     }
     else {
-      res.status(200).send({"message": "ok", "data": { userInfo }});
+      const token = authorization.split(' ')[1];
+      jwt.verify(token, process.env.ACCESS_SECRET, async (err, data) => {
+        if (err) {
+          return res.status(401).send('Unauthorized')
+        }
+        else {
+          const userInfo = await users.findOne({
+            where : {
+              email: data.email
+            },
+            attributes: {
+              exclude: ['password']
+            }
+          });
+          if (!userInfo) {
+            return res.status(401).send('Unauthorized')
+          }
+          else {
+            res.status(200).send({"message": "ok", "data": { userInfo }})
+          }
+        }
+      })
     }
-
-    // const authorization = req.headers['authorization']
-
-    // if (!authorization) {
-    //   return res.status(401).send('Unauthorized')
-    // }
-    // else {
-    //   const token = authorization.split(' ')[1];
-    //   jwt.verify(token, process.env.ACCESS_SECRET, async (err, data) => {
-    //     if (err) {
-    //       return res.status(401).send('Unauthorized')
-    //     }
-    //     else {
-    //       const userInfo = await users.findOne({
-    //         where : {
-    //           email: data.email
-    //         },
-    //         attributes: {
-    //           exclude: ['password']
-    //         }
-    //       });
-    //       if (!userInfo) {
-    //         return res.status(401).send('Unauthorized')
-    //       }
-    //       else {
-    //         res.status(200).send({"message": "ok", "data": { userInfo }})
-    //       }
-    //     }
-    //   })
-    // }
   },
 
   createUser: async (req, res) => {
