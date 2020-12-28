@@ -3,14 +3,25 @@ const jwt = require('jsonwebtoken');
 
 module.exports = {
   updateUser: async (req, res) => {
-    //여기 문제가 있다. 받는 정보가 더 필요하다. 패스워드가 같은 회원이 있다면.
+    //받는 3가지 어세스토큰, 비밀번호, 닉네임
+    const authorization = req.headers.authorization;
+
+    if (!authorization) {
+      res.status(422).json({
+        message: 'invalid access token'
+      });
+    }
+
+    const accessToken = authorization.split(' ')[1];
+    const tokenData = jwt.verify(accessToken, process.env.ACCESS_SECRET);
+
     const userInfo = await users.findOne({
-      where: {password: req.body.passwordCheck} //api 북과 다른 부분
+      where: { id: tokenData.id, name: tokenData.name, email: tokenData.email }
     });
 
     if (!userInfo) {
       res.status(422).json({
-        message: 'Invalid Password'
+        message: 'expire access token deadline'
       });
     }
 
@@ -68,19 +79,24 @@ module.exports = {
   },
 
   deleteUser: async (req, res) => {
-    if (!req.session.userid) {
-      res.status(401).json({
-        message: 'Get Out Of Here'
+    const authorization = req.headers.authorization;
+
+    if (!authorization) {
+      res.status(422).json({
+        message: 'invalid access token'
       });
     }
 
+    const accessToken = authorization.split(' ')[1];
+    const tokenData = jwt.verify(accessToken, process.env.ACCESS_SECRET);
+
     const userInfo = await users.findOne({
-      where: {id: req.session.userid}
+      where: { id: tokenData.id, name: tokenData.name, email: tokenData.email }
     });
 
     if (!userInfo) {
-      res.status(401).json({
-        message: 'Get Out Of Here'
+      res.status(422).json({
+        message: 'expire access token deadline'
       });
     }
 
