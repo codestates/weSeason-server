@@ -17,8 +17,8 @@ module.exports = {
         res.status(404).send('Not Found');
       }
       else {
-        const accessToken = jwt.sign({ ...userInfo.toJSON()}, process.env.ACCESS_SECRET, { expiresIn: '1h' });
-        const refreshToken = jwt.sign({ ...userInfo.toJSON()}, process.env.REFRESH_SECRET, { expiresIn: '1d'});
+        const accessToken = jwt.sign({ ...userInfo.toJSON()}, process.env.ACCESS_SECRET, { expiresIn: '15s' });
+        const refreshToken = jwt.sign({ ...userInfo.toJSON()}, process.env.REFRESH_SECRET, { expiresIn: '1h'});
         res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true, sameSite: 'none'});
         res.status(200).send({ 'data': { 'accessToken': accessToken }, 'message': 'ok'});
       }
@@ -45,7 +45,9 @@ module.exports = {
             res.status(200).send({ "data": null, "message": "invalid user information" })
           }
           else {
-            const accessToken = jwt.sign({userInfo}, process.env.ACCESS_SECRET, { expiresIn: '1h' });
+            const accessToken = jwt.sign({userInfo}, process.env.ACCESS_SECRET, { expiresIn: '15s' });
+            const refreshToken = jwt.sign({ ...userInfo.toJSON()}, process.env.REFRESH_SECRET, { expiresIn: '1h'});
+            res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true, sameSite: 'none'});
             res.status(200).send({ 'data': { 'accessToken': accessToken }, 'message': 'ok ref'});
           }
         }
