@@ -73,8 +73,8 @@ module.exports = {
     });
 
     if (!userInfo) {
-      res.status(422).json({
-        message: 'expire access token deadline'
+      res.status(401).json({
+        message: 'expired token'
       });
     }
 
@@ -89,30 +89,11 @@ module.exports = {
     });
   },
 
-  singout: async (req, res) => {
-    //생각해보니깐... 로그아웃하는데 토큰 검증할 필요도 없잖아.
-    const authorization = req.headers.authorization;
-
-    if (!authorization) {
-      res.status(401).json({
-        message: 'Unauthorized'
-      });
-    }
-
-    const accessToken = authorization.split(' ')[1];
-    const tokenData = jwt.verify(accessToken, process.env.ACCESS_SECRET);
-
-    const userInfo = await users.findOne({
-      where: { id: tokenData.id, name: tokenData.name, email: tokenData.email }
-    });
-
-    if (!userInfo) {
-      res.status(422).json({
-        message: 'expire access token deadline'
-      });
-    }
-
-    res.status(200).json({
+  singout: (req, res) => {
+    res
+    .clearCookie('refreshToken')
+    .status(200)
+    .json({
       message: 'OK'
     });
   }
