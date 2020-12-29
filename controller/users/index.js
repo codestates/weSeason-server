@@ -7,8 +7,8 @@ module.exports = {
     const authorization = req.headers.authorization;
 
     if (!authorization) {
-      res.status(422).json({
-        message: 'invalid access token'
+      res.status(401).json({
+        message: 'Unauthorized'
       });
     }
 
@@ -20,8 +20,8 @@ module.exports = {
     });
 
     if (!userInfo) {
-      res.status(422).json({
-        message: 'expire access token deadline'
+      res.status(401).json({
+        message: 'expired token'
       });
     }
 
@@ -82,8 +82,8 @@ module.exports = {
     const authorization = req.headers.authorization;
 
     if (!authorization) {
-      res.status(422).json({
-        message: 'invalid access token'
+      res.status(401).json({
+        message: 'Unauthorized'
       });
     }
 
@@ -95,8 +95,8 @@ module.exports = {
     });
 
     if (!userInfo) {
-      res.status(422).json({
-        message: 'expire access token deadline'
+      res.status(401).json({
+        message: 'expired token'
       });
     }
 
@@ -130,7 +130,7 @@ module.exports = {
             }
           });
           if (!userInfo) {
-            return res.status(401).send('Unauthorized')
+            return res.status(401).send('expired token')
           }
           else {
             res.status(200).send({"message": "ok", "data": { userInfo }})
