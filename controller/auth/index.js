@@ -51,5 +51,67 @@ module.exports = {
         }
       })
     }
+  },
+
+  check: async (req, res) => {
+    //토큰과, 비밀번호를 받는다.
+    const authorization = req.headers.authorization;
+
+    if (!authorization) {
+      res.status(401).json({
+        message: 'Unauthorized'
+      });
+    }
+
+    const accessToken = authorization.split(' ')[1];
+    const tokenData = jwt.verify(accessToken, process.env.ACCESS_SECRET);
+
+    const userInfo = await users.findOne({
+      where: { id: tokenData.id, name: tokenData.name, email: tokenData.email }
+    });
+
+    if (!userInfo) {
+      res.status(422).json({
+        message: 'expire access token deadline'
+      });
+    }
+
+    if (userInfo.dataValues.password !== req.body.password) {
+      res.status(400).json({
+        message: 'Wrong Password'
+      })
+    }
+
+    res.status(200).json({
+      message: 'OK'
+    });
+  },
+
+  singout: async (req, res) => {
+    //생각해보니깐... 로그아웃하는데 토큰 검증할 필요도 없잖아.
+    const authorization = req.headers.authorization;
+
+    if (!authorization) {
+      res.status(401).json({
+        message: 'Unauthorized'
+      });
+    }
+
+    const accessToken = authorization.split(' ')[1];
+    const tokenData = jwt.verify(accessToken, process.env.ACCESS_SECRET);
+
+    const userInfo = await users.findOne({
+      where: { id: tokenData.id, name: tokenData.name, email: tokenData.email }
+    });
+
+    if (!userInfo) {
+      res.status(422).json({
+        message: 'expire access token deadline'
+      });
+    }
+
+    res.status(200).json({
+      message: 'OK'
+    });
   }
 }
