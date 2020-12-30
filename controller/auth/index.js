@@ -1,6 +1,17 @@
 const { users } = require('../../models/index');
 const jwt = require('jsonwebtoken');
 
+//토큰 체크 함수
+const checkToken = (someToken, tokenKey) => {
+  try {
+    return jwt.verify(someToken, tokenKey);
+  }
+
+  catch (err) {
+    return null;
+  }
+}
+
 module.exports = {
   signIn: async (req, res) => {
     const { email, password } = req.body;
@@ -60,26 +71,32 @@ module.exports = {
     const authorization = req.headers.authorization;
 
     if (!authorization) {
-      res.status(401).json({
+      return res.status(401).json({
         message: 'Unauthorized'
       });
     }
 
     const accessToken = authorization.split(' ')[1];
-    const tokenData = jwt.verify(accessToken, process.env.ACCESS_SECRET);
+    const tokenData = checkToken(accessToken, process.env.ACCESS_SECRET);
+
+    if (!tokenData) {
+      return res.status(401).json({
+        message: 'expired token'
+      });
+    }
 
     const userInfo = await users.findOne({
       where: { id: tokenData.id, name: tokenData.name, email: tokenData.email }
     });
 
     if (!userInfo) {
-      res.status(401).json({
-        message: 'expired token'
+      return res.status(401).json({
+        message: 'Unauthorized'
       });
     }
 
     if (userInfo.dataValues.password !== req.body.password) {
-      res.status(400).json({
+      return res.status(400).json({
         message: 'Wrong Password'
       })
     }
@@ -89,7 +106,7 @@ module.exports = {
     });
   },
 
-  singout: (req, res) => {
+  signout: (req, res) => {
     res
     .clearCookie('refreshToken')
     .status(200)
