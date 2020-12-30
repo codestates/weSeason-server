@@ -1,27 +1,44 @@
 const { users } = require('../../models/index');
 const jwt = require('jsonwebtoken');
 
+//토큰 체크 함수
+const checkToken = (someToken, tokenKey) => {
+  try {
+    return jwt.verify(someToken, tokenKey);
+  }
+
+  catch (err) {
+    return null;
+  }
+}
+
 module.exports = {
   updateUser: async (req, res) => {
     //받는 3가지 어세스토큰, 비밀번호, 닉네임
     const authorization = req.headers.authorization;
 
     if (!authorization) {
-      res.status(401).json({
+      return res.status(401).json({
         message: 'Unauthorized'
       });
     }
 
     const accessToken = authorization.split(' ')[1];
-    const tokenData = jwt.verify(accessToken, process.env.ACCESS_SECRET);
+    const tokenData = checkToken(accessToken, process.env.ACCESS_SECRET);
+
+    if (!tokenData) {
+      return res.status(401).json({
+        message: 'expired token'
+      });
+    }
 
     const userInfo = await users.findOne({
       where: { id: tokenData.id, name: tokenData.name, email: tokenData.email }
     });
 
     if (!userInfo) {
-      res.status(401).json({
-        message: 'expired token'
+      return res.status(401).json({
+        message: 'Unauthorized'
       });
     }
 
@@ -31,14 +48,14 @@ module.exports = {
     //닉네임이나 비밀번호 입력한 것이 기존과 같을 경우
     if (userInfo.dataValues.password === newPassword ||
         userInfo.dataValues.nickname === newNickname) {
-      res.status(406).json({
+        return res.status(406).json({
         message: 'Nothing Changed'
       });
     }
 
     //둘 다 없을 때
     if (!newPassword && !newNickname) {
-      res.status(400).json({
+      return res.status(400).json({
         message: 'Bad Request'
       });
     }
@@ -49,7 +66,7 @@ module.exports = {
         nickname: newNickname
       });
 
-      res.status(200).json({
+      return res.status(200).json({
         message: 'OK'
       });
     }
@@ -60,7 +77,7 @@ module.exports = {
         password: newPassword
       });
 
-      res.status(200).json({
+      return res.status(200).json({
         message: 'OK'
       });
     }
@@ -72,7 +89,7 @@ module.exports = {
         password: newPassword
       });
 
-      res.status(200).json({
+      return res.status(200).json({
         message: 'OK'
       });
     }
@@ -82,21 +99,27 @@ module.exports = {
     const authorization = req.headers.authorization;
 
     if (!authorization) {
-      res.status(401).json({
+      return res.status(401).json({
         message: 'Unauthorized'
       });
     }
 
     const accessToken = authorization.split(' ')[1];
-    const tokenData = jwt.verify(accessToken, process.env.ACCESS_SECRET);
+    const tokenData = checkToken(accessToken, process.env.ACCESS_SECRET);
+
+    if (!tokenData) {
+      return res.status(401).json({
+        message: 'expired token'
+      });
+    }
 
     const userInfo = await users.findOne({
       where: { id: tokenData.id, name: tokenData.name, email: tokenData.email }
     });
 
     if (!userInfo) {
-      res.status(401).json({
-        message: 'expired token'
+      return res.status(401).json({
+        message: 'Unauthorized'
       });
     }
 

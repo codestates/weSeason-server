@@ -3,7 +3,7 @@ const router = express.Router();
 const usersController = require('../controller/users/index')
 const authController = require('../controller/auth/index')
 const clothesController = require('../controller/clothes/index')
-// const weatherController = require('../controller/weather/index')
+const weatherController = require('../controller/weather/index')
 
 router.get('/users', usersController.infoUser);
 router.post('/users', usersController.createUser);
@@ -12,10 +12,10 @@ router.delete('/users', usersController.deleteUser);
 
 router.get('/auth/signin', authController.tokenMaker)
 router.post('/auth/signin', authController.signIn)
-router.post('/auth/singout', authController.signout)
+router.post('/auth/signout', authController.signout)
 router.post('/auth/check', authController.check)
 
 router.get('/clothes/:temp', clothesController.getClothes);
-// router.get('/weather', weatherController);
+router.get('/weather', weatherController.getWeathers);
 
 module.exports = router;
