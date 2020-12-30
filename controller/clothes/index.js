@@ -16,7 +16,7 @@ module.exports = {
         }]
       });
       const matchedClothed = match.map(el => el.cloth)
-      res.status(201).send({
+      res.status(200).send({
         "message": "ok",
         "data": {
           "cloth": matchedClothed
@@ -34,7 +34,7 @@ module.exports = {
         }]
       });
       const matchedClothed = match.map(el => el.cloth)
-      res.status(201).send({
+      res.status(200).send({
         "message": "ok",
         "data": {
           "cloth": matchedClothed
@@ -52,7 +52,7 @@ module.exports = {
         }]
       });
       const matchedClothed = match.map(el => el.cloth)
-      res.status(201).send({
+      res.status(200).send({
         "message": "ok",
         "data": {
           "cloth": matchedClothed
@@ -70,7 +70,7 @@ module.exports = {
         }]
       });
       const matchedClothed = match.map(el => el.cloth)
-      res.status(201).send({
+      res.status(200).send({
         "message": "ok",
         "data": {
           "cloth": matchedClothed
@@ -88,7 +88,7 @@ module.exports = {
         }]
       });
       const matchedClothed = match.map(el => el.cloth)
-      res.status(201).send({
+      res.status(200).send({
         "message": "ok",
         "data": {
           "cloth": matchedClothed
@@ -106,7 +106,7 @@ module.exports = {
         }]
       });
       const matchedClothed = match.map(el => el.cloth)
-      res.status(201).send({
+      res.status(200).send({
         "message": "ok",
         "data": {
           "cloth": matchedClothed
@@ -124,7 +124,7 @@ module.exports = {
         }]
       });
       const matchedClothed = match.map(el => el.cloth)
-      res.status(201).send({
+      res.status(200).send({
         "message": "ok",
         "data": {
           "cloth": matchedClothed
@@ -142,7 +142,7 @@ module.exports = {
         }]
       });
       const matchedClothed = match.map(el => el.cloth)
-      res.status(201).send({
+      res.status(200).send({
         "message": "ok",
         "data": {
           "cloth": matchedClothed
@@ -151,7 +151,7 @@ module.exports = {
     }
 
     else {
-      res.status(201).send('invalid temperature')
+      res.status(400).send({ "message": 'invalid temperature'})
     }
 
     

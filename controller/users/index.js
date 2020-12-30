@@ -134,14 +134,14 @@ module.exports = {
     const authorization = req.headers['authorization']
     
     if (!authorization) {
-      return res.status(401).send('Unauthorized')
+      return res.status(401).send({ "message": 'Unauthorized' })
     }
     else {
       const token = authorization.split(' ')[1];
 
       jwt.verify(token, process.env.ACCESS_SECRET, async (err, data) => {
         if (err) {
-          return res.status(401).send('Unauthorized')
+          return res.status(401).send({ "message": 'expired token' })
         }
         else {
           const userInfo = await users.findOne({
@@ -153,7 +153,7 @@ module.exports = {
             }
           });
           if (!userInfo) {
-            return res.status(401).send('expired token')
+            return res.status(401).send({ "message": 'Invalid user' })
           }
           else {
             res.status(200).send({"message": "ok", "data": { userInfo }})
@@ -165,6 +165,9 @@ module.exports = {
 
   createUser: async (req, res) => {
     const { name, nickname, email, password } = req.body;
+    if (!name || !nickname || !email || !password) {
+      res.status(400).send({ "message": 'Bad Request' })
+    }
 
     users.findOrCreate ({
       where: {
@@ -178,10 +181,11 @@ module.exports = {
     })
     .then(async ([user, created]) => {
       if (!created) {
-        return res.status(409).send('conflict');
+        return res.status(409).send({ "message": 'Conflict' });
       }
-      const data = await user.get({ plain: true });
-      res.status(200).json(data);
+      else {
+        res.status(200).send({ "message": 'Created' });
+        }
     });
   }
 }
