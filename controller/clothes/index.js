@@ -1,7 +1,6 @@
 const { clothes } = require('../../models/index');
 const { weather } = require('../../models/index');
 
-
 module.exports = {
   getClothes: async (req, res) => {
     const temp = req.params.temp
