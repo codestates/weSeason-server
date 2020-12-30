@@ -12,7 +12,7 @@ router.delete('/users', usersController.deleteUser);
 
 router.get('/auth/signin', authController.tokenMaker)
 router.post('/auth/signin', authController.signIn)
-router.post('/auth/singout', authController.signout)
+router.post('/auth/signout', authController.signout)
 router.post('/auth/check', authController.check)
 
 router.get('/clothes/:temp', clothesController.getClothes);

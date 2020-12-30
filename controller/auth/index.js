@@ -5,7 +5,7 @@ module.exports = {
   signIn: async (req, res) => {
     const { email, password } = req.body;
     if (!email || !password) {
-      res.status(400).send('Bad Request');
+      res.status(400).send({ 'message': 'Bad Request' });
     }
     else {
       const userInfo = await users.findOne({
@@ -14,13 +14,13 @@ module.exports = {
       });
       console.log({...userInfo.toJSON()})
       if (!userInfo) {
-        res.status(404).send('Not Found');
+        res.status(404).send({ 'message': 'Not Found' });
       }
       else {
         const accessToken = jwt.sign({ ...userInfo.toJSON()}, process.env.ACCESS_SECRET, { expiresIn: '1h' });
         const refreshToken = jwt.sign({ ...userInfo.toJSON()}, process.env.REFRESH_SECRET, { expiresIn: '2h'});
         res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true, sameSite: 'none'});
-        res.status(200).send({ 'data': { 'accessToken': accessToken }, 'message': 'ok'});
+        res.status(200).send({ 'message': 'ok', 'data': { 'accessToken': accessToken } });
       }
     }
   },
@@ -34,7 +34,7 @@ module.exports = {
       jwt.verify(req.cookies.refreshToken, process.env.REFRESH_SECRET, async (err, data) => {
         // console.log(data)
         if (err) {
-          res.status(400).send({ "data": null, "message": "invalid refresh token" })
+          res.status(401).send({ "data": null, "message": "invalid refresh token" })
         }
         else {
           const userInfo = await users.findOne({
@@ -42,13 +42,13 @@ module.exports = {
             attrubutes: { exclude: ['password'] }
           });
           if (!userInfo) {
-            res.status(200).send({ "data": null, "message": "invalid user information" })
+            res.status(406).send({ "data": null, "message": "invalid user information" })
           }
           else {
-            const accessToken = jwt.sign({...userInfo.toJSON()}, process.env.ACCESS_SECRET, { expiresIn: '15s' });
-            const refreshToken = jwt.sign({ ...userInfo.toJSON()}, process.env.REFRESH_SECRET, { expiresIn: '1h'});
+            const accessToken = jwt.sign({...userInfo.toJSON()}, process.env.ACCESS_SECRET, { expiresIn: '1h' });
+            const refreshToken = jwt.sign({ ...userInfo.toJSON()}, process.env.REFRESH_SECRET, { expiresIn: '2h'});
             res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true, sameSite: 'none'});
-            res.status(200).send({ 'data': { 'accessToken': accessToken }, 'message': 'ok ref'});
+            res.status(200).send({ 'message': 'ok', 'data': { 'accessToken': accessToken } });
           }
         }
       })
@@ -89,7 +89,7 @@ module.exports = {
     });
   },
 
-  singout: (req, res) => {
+  signout: (req, res) => {
     res
     .clearCookie('refreshToken')
     .status(200)
