@@ -53,6 +53,8 @@ module.exports = {
       delete obj.weather[0].id;
 
       data.dt = obj.dt;
+      // data.temp = obj.temp;
+      // data.feels_like = obj.feels_like;
       data.temp = Math.round((obj.temp - 273.15) * 100) / 100;
       data.feels_like = Math.round((obj.feels_like - 273.15) * 100) / 100;
       data.weather = obj.weather;
