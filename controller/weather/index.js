@@ -1,9 +1,11 @@
 const fetch = require("node-fetch");
+const jwt = require("jsonwebtoken");
+const { users } = require('../../models/index');
 
 const checkResultFetch = (somLat, somLon, key) => {
   try {
     return fetch(
-      `https://api.openweathermap.org/data/2.5/onecall?lat=${somLat}&lon=${somLon}&exclude=hourly&appid=${key}`
+      `https://api.openweathermap.org/data/2.5/onecall?lat=${somLat}&lon=${somLon}&exclude=current,daily,minutely&appid=${key}`
     );
   }
 
@@ -20,6 +22,20 @@ const checkToken = (someToken, tokenKey) => {
   catch (err) {
     return null;
   }
+}
+
+const extractData = (obj, arr) => {
+  let data = {};
+  
+  delete obj.weather[0].id;
+
+  data.dt = obj.dt;
+  data.temp = Math.round((obj.temp - 273.15) * 100) / 100;
+  data.feels_like = Math.round((obj.feels_like - 273.15) * 100) / 100;
+  data.weather = obj.weather;
+
+  arr.push(data);
+  return;
 }
 
 module.exports = {
@@ -39,32 +55,8 @@ module.exports = {
 
     let weatherData = [];
 
-    const extractData = (obj) => {
-      let data = {};
-
-      if (typeof obj.temp === 'object') {
-        obj.temp = obj.temp.day;
-      }
-
-      if (typeof obj.feels_like === 'object') {
-        obj.feels_like = obj.feels_like.day;
-      }
-
-      delete obj.weather[0].id;
-
-      data.dt = obj.dt;
-      data.temp = Math.round((obj.temp - 273.15) * 100) / 100;
-      data.feels_like = Math.round((obj.feels_like - 273.15) * 100) / 100;
-      data.weather = obj.weather;
-
-      weatherData.push(data);
-      return;
-    }
-
-    extractData(jsonData.current);
-
-    for (let n = 0; n < jsonData.daily.length; n++) {
-      extractData(jsonData.daily[n]);
+    for (let n = 0; n < 9; n++) {
+      extractData(jsonData.hourly[n], weatherData);
     }
 
     //-------여기까지 날씨 정보 뽑아내기.
