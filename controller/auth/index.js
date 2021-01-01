@@ -1,5 +1,6 @@
 const { users } = require('../../models/index');
 const jwt = require('jsonwebtoken');
+const axios = require('axios');
 
 //토큰 체크 함수
 const checkToken = (someToken, tokenKey) => {
@@ -15,6 +16,7 @@ const checkToken = (someToken, tokenKey) => {
 module.exports = {
   signIn: async (req, res) => {
     const { email, password } = req.body;
+    console.log(req.body)
     if (!email || !password) {
       res.status(400).send({ 'message': 'Bad Request' });
     }
@@ -23,7 +25,7 @@ module.exports = {
         where: { email: email, password: password},
         attrubutes: { exclude: ['password'] }
       });
-      console.log({...userInfo.toJSON()})
+      // console.log({...userInfo.toJSON()})
       if (!userInfo) {
         res.status(404).send({ 'message': 'Not Found' });
       }
@@ -113,5 +115,25 @@ module.exports = {
     .json({
       message: 'OK'
     });
-  }
+  },
+
+  callback: async (req, res) => {
+try {
+  const clientID = process.env.GOOGLE_CLIENT_ID;
+  const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+
+  const resp = await axios.post('https://oauth2.googleapis.com/token', 
+  {client_id: clientID, client_secret: clientSecret, code: req.body.authorizationCode, redirect_uri: 'https://localhost:3000', grant_type: 'authorization_code'}, 
+  {headers: {Accept: 'application/x-www-form-urlencoded'}}  )
+ 
+  const token = resp.data.access_token
+  console.log(token)
+  res.status(200).send({ 'accessToken': token })
 }
+catch(err) {
+  console.log(err)
+}
+}
+    
+}
+

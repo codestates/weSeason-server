@@ -57,7 +57,6 @@ module.exports = {
 
     for (let n = 0; n < 9; n++) {
       extractData(jsonData.hourly[n], weatherData);
-    }
 
     //-------여기까지 날씨 정보 뽑아내기.
 

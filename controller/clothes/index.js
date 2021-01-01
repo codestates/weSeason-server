@@ -3,8 +3,7 @@ const { weather } = require('../../models/index');
 
 module.exports = {
   getClothes: async (req, res) => {
-    const temp = req.params.temp
-
+    const temp = req.query.temp
     if (temp >= 28) {
       const match = await clothes.findAll({
         attributes: ['cloth'],
