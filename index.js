@@ -4,11 +4,17 @@ const cookieParser = require("cookie-parser");
 const routerIdx = require('./router/index');
 const app = express()
 
+app.use(cors({
+  origin: ["https://www.weseason4.com"],
+  credentials: true,
+}));
+
+// app.use(cors());
+
 // app.use(cors({
 //   origin: ["https://localhost:3000"],
 //   credentials: true,
 // }));
-app.use(cors());
 
 app.use(express.json());
 app.use(cookieParser());
