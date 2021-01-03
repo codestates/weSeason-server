@@ -1,9 +1,8 @@
-'use strict';
-const crypto = require('crypto');
+"use strict";
+const crypto = require("crypto");
 
-const {
-  Model
-} = require('sequelize');
+const { Model } = require("sequelize");
+const { use } = require("../router");
 module.exports = (sequelize, DataTypes) => {
   class users extends Model {
     /**
@@ -14,30 +13,44 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
     }
-  };
-  users.init({
-    name: DataTypes.STRING,
-    nickname: DataTypes.STRING,
-    email: DataTypes.STRING,
-    password: DataTypes.STRING
-  }, {
-    sequelize,
-    modelName: 'users',
-  });
+  }
+  users.init(
+    {
+      name: DataTypes.STRING,
+      nickname: DataTypes.STRING,
+      email: DataTypes.STRING,
+      password: DataTypes.STRING,
+    },
+    {
+      sequelize,
+      modelName: "users",
+    }
+  );
 
   users.beforeCreate((users, options) => {
-    users.password = crypto.createHash('sha512')
-    .update(users.password)
-    .digest('base64');
+    if (users.password) {
+      users.password = crypto
+        .createHash("sha512")
+        .update(users.password)
+        .digest("base64");
+    }
   });
 
   users.beforeFind((users, options) => {
     if (users.where.password) {
-      users.where.password = crypto.createHash('sha512')
-      .update(users.where.password)
-      .digest('base64');
+      users.where.password = crypto
+        .createHash("sha512")
+        .update(users.where.password)
+        .digest("base64");
     }
   });
-
+  users.beforeUpdate((users, options) => {
+    if (users.password) {
+      users.password = crypto
+        .createHash("sha512")
+        .update(users.password)
+        .digest("base64");
+    }
+  });
   return users;
 };
