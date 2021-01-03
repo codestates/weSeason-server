@@ -92,7 +92,7 @@ module.exports = {
       where: { email: data.email }, attrubutes: { exclude: ['password'] }
     });
 
-    if (!userInfo && oauthUser) {
+    if (!userInfo && !oauthUser) {
       return res.status(400).json({
         message: 'Unauthorized'
       });
