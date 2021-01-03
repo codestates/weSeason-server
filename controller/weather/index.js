@@ -1,10 +1,10 @@
-const { users } = require('../../models/index');
-const { oauthusers } = require('../../models/index');
+const { users } = require("../../models/index");
+const { oauthusers } = require("../../models/index");
 const {
   checkResultFetch,
   checkToken,
-  extractData
-} = require('../function/index');
+  extractData,
+} = require("../function/index");
 
 module.exports = {
   getWeathers: async (req, res) => {
@@ -15,7 +15,7 @@ module.exports = {
 
     if (!apiCall) {
       return res.status(503).json({
-        message: 'Service Unavailable'
+        message: "Service Unavailable",
       });
     }
 
@@ -30,43 +30,38 @@ module.exports = {
     //-------여기까지 날씨 정보 뽑아내기.
 
     const authorization = req.headers.authorization;
-    const oauthEmail = req.cookies.refreshToken
 
-    if (!authorization && !oauthEmail) {
+    if (!authorization) {
       for (let i = 0; i < weatherData.length; i++) {
         delete weatherData[i].feels_like;
       }
 
       return res.status(203).json({
-        data: weatherData
+        data: weatherData,
       });
     }
 
-    const accessToken = authorization.split(' ')[1];
+    const accessToken = authorization.split(" ")[1];
     const tokenData = checkToken(accessToken, process.env.ACCESS_SECRET);
-    const oauthData = checkToken(oauthEmail, process.env.ACCESS_SECRET)
 
-    if (!tokenData && !oauthData) {
+    if (!tokenData) {
       return res.status(401).json({
-        message: 'expired token'
+        message: "expired token",
       });
     }
 
     const userInfo = await users.findOne({
-      where: { id: tokenData.id, name: tokenData.name, email: tokenData.email }
-    });
-    const oauthUser = await oauthusers.findOne({
-      where: { email: oauthData.email }, attrubutes: { exclude: ['password'] }
+      where: { email: tokenData.email },
     });
 
-    if (!userInfo && !oauthUser) {
+    if (!userInfo) {
       return res.status(400).json({
-        message: 'Unauthorized'
+        message: "Unauthorized",
       });
     }
 
     res.status(200).json({
-      data: weatherData
-    })
-  }
-}
+      data: weatherData,
+    });
+  },
+};
