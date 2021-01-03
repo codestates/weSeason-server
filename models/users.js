@@ -1,4 +1,6 @@
 'use strict';
+const crypto = require('crypto');
+
 const {
   Model
 } = require('sequelize');
@@ -22,5 +24,20 @@ module.exports = (sequelize, DataTypes) => {
     sequelize,
     modelName: 'users',
   });
+
+  users.beforeCreate((users, options) => {
+    users.password = crypto.createHash('sha512')
+    .update(users.password)
+    .digest('base64');
+  });
+
+  users.beforeFind((users, options) => {
+    if (users.where.password) {
+      users.where.password = crypto.createHash('sha512')
+      .update(users.where.password)
+      .digest('base64');
+    }
+  });
+
   return users;
 };

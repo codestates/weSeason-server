@@ -1,19 +1,9 @@
 const { users } = require('../../models/index');
 const { oauthusers } = require('../../models/index');
+const { checkToken } = require('../function/index');
 const jwt = require('jsonwebtoken');
 const axios = require('axios');
 const jwtDecode = require('jwt-decode')
-
-//토큰 체크 함수
-const checkToken = (someToken, tokenKey) => {
-  try {
-    return jwt.verify(someToken, tokenKey);
-  }
-
-  catch (err) {
-    return null;
-  }
-}
 
 module.exports = {
   signIn: async (req, res) => {

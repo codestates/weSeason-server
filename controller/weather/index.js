@@ -1,43 +1,10 @@
-const fetch = require("node-fetch");
-const jwt = require("jsonwebtoken");
 const { users } = require('../../models/index');
 const { oauthusers } = require('../../models/index');
-
-const checkResultFetch = (somLat, somLon, key) => {
-  try {
-    return fetch(
-      `https://api.openweathermap.org/data/2.5/onecall?lat=${somLat}&lon=${somLon}&exclude=current,daily,minutely&appid=${key}`
-    );
-  }
-
-  catch {
-    return null;
-  }
-}
-
-const checkToken = (someToken, tokenKey) => {
-  try {
-    return jwt.verify(someToken, tokenKey);
-  }
-
-  catch (err) {
-    return null;
-  }
-}
-
-const extractData = (obj, arr) => {
-  let data = {};
-  
-  delete obj.weather[0].id;
-
-  data.dt = obj.dt;
-  data.temp = Math.round((obj.temp - 273.15) * 100) / 100;
-  data.feels_like = Math.round((obj.feels_like - 273.15) * 100) / 100;
-  data.weather = obj.weather;
-
-  arr.push(data);
-  return;
-}
+const {
+  checkResultFetch,
+  checkToken,
+  extractData
+} = require('../function/index');
 
 module.exports = {
   getWeathers: async (req, res) => {
@@ -89,10 +56,10 @@ module.exports = {
       where: { id: tokenData.id, name: tokenData.name, email: tokenData.email }
     });
     const oauthUser = await oauthusers.findOne({
-      where: { email: data.email }, attrubutes: { exclude: ['password'] }
+      where: { email: oauthData.email }, attrubutes: { exclude: ['password'] }
     });
 
-    if (!userInfo && oauthUser) {
+    if (!userInfo && !oauthUser) {
       return res.status(400).json({
         message: 'Unauthorized'
       });
