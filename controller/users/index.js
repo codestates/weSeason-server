@@ -1,16 +1,6 @@
-const { users } = require('../../models/index');
 const jwt = require('jsonwebtoken');
-
-//토큰 체크 함수
-const checkToken = (someToken, tokenKey) => {
-  try {
-    return jwt.verify(someToken, tokenKey);
-  }
-
-  catch (err) {
-    return null;
-  }
-}
+const { users } = require('../../models/index');
+const { checkToken } = require('../function/index');
 
 module.exports = {
   updateUser: async (req, res) => {
