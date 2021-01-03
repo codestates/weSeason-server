@@ -1,6 +1,7 @@
 const fetch = require("node-fetch");
 const jwt = require("jsonwebtoken");
 const { users } = require('../../models/index');
+const { oauthusers } = require('../../models/index');
 
 const checkResultFetch = (somLat, somLon, key) => {
   try {
@@ -62,8 +63,9 @@ module.exports = {
     //-------여기까지 날씨 정보 뽑아내기.
 
     const authorization = req.headers.authorization;
+    const oauthEmail = req.cookies.refreshToken
 
-    if (!authorization) {
+    if (!authorization && !oauthEmail) {
       for (let i = 0; i < weatherData.length; i++) {
         delete weatherData[i].feels_like;
       }
@@ -75,8 +77,9 @@ module.exports = {
 
     const accessToken = authorization.split(' ')[1];
     const tokenData = checkToken(accessToken, process.env.ACCESS_SECRET);
+    const oauthData = checkToken(oauthEmail, process.env.ACCESS_SECRET)
 
-    if (!tokenData) {
+    if (!tokenData && !oauthData) {
       return res.status(401).json({
         message: 'expired token'
       });
@@ -85,8 +88,11 @@ module.exports = {
     const userInfo = await users.findOne({
       where: { id: tokenData.id, name: tokenData.name, email: tokenData.email }
     });
+    const oauthUser = await oauthusers.findOne({
+      where: { email: data.email }, attrubutes: { exclude: ['password'] }
+    });
 
-    if (!userInfo) {
+    if (!userInfo && oauthUser) {
       return res.status(400).json({
         message: 'Unauthorized'
       });
