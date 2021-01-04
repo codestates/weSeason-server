@@ -93,7 +93,7 @@ module.exports = {
           client_secret: clientSecret,
           code,
           grant_type: "authorization_code",
-          redirect_uri: "https://localhost:3000/auth/google",
+          redirect_uri: "https://www.weseason4.com/auth/google",
         },
         { headers: { Accept: "application/json" } }
       );
