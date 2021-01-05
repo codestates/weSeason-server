@@ -89,16 +89,6 @@ module.exports = {
     const newPassword = req.body.password;
     const newNickname = req.body.nickname;
 
-    //닉네임이나 비밀번호 입력한 것이 기존과 같을 경우
-    if (
-      userInfo.dataValues.password === newPassword ||
-      userInfo.dataValues.nickname === newNickname
-    ) {
-      return res.status(406).json({
-        message: "Nothing Changed",
-      });
-    }
-
     //둘 다 없을 때
     if (!newPassword && !newNickname) {
       return res.status(400).json({

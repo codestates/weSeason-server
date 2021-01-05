@@ -2,7 +2,6 @@
 const crypto = require("crypto");
 
 const { Model } = require("sequelize");
-const { use } = require("../router");
 module.exports = (sequelize, DataTypes) => {
   class users extends Model {
     /**
@@ -45,7 +44,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   });
   users.beforeUpdate((users, options) => {
-    if (users.password) {
+    if (options.fields.includes("password")) {
       users.password = crypto
         .createHash("sha512")
         .update(users.password)
