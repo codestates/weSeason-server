@@ -29,7 +29,7 @@ module.exports = {
   development: {
     username: "admin",
     password: process.env.DATABASE_PASSWORD,
-    database: "project",
+    database: "weseasondb",
     host: process.env.DATABASE_HOST,
     port: process.env.DATABASE_PORT,
     dialect: "mysql",
